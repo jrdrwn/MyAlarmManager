@@ -150,4 +150,18 @@ class AlarmReceiver : BroadcastReceiver() {
         val notification = builder.build()
         notificationManagerCompat.notify(notifId, notification)
     }
+
+    fun cancelAlarm(context: Context, type: String) {
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmReceiver::class.java)
+        val requestCode =
+            if (type.equals(TYPE_ONE_TIME, ignoreCase = true)) ID_ONETIME else ID_REPEATING
+        val pendingIntent =
+            PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
+        if (pendingIntent != null) {
+            pendingIntent.cancel()
+            alarmManager.cancel(pendingIntent)
+            Toast.makeText(context, "Repeating alarm dibatalkan", Toast.LENGTH_SHORT).show()
+        }
+    }
 }
